@@ -94,6 +94,7 @@
         cardlist: [new Card('./static/hhj2.jpg','test', 'about what', 'proj1')]
       }
     },
+    props: ['skill'],
     methods:{
       onFileChange(e, index) {
         console.log(e, index)
