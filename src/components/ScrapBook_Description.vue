@@ -103,6 +103,7 @@
       return {
       }
     },
+    props: ['skill'],
     methods:{
       goSkillBook: function(){
 

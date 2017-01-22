@@ -93,6 +93,7 @@
 
 export default {
   name: 'sb_scrap',
+  props: ['skill'],
   data () {
     return {
       valid : true, // when set to true, the canvas will redraw everything
@@ -105,7 +106,7 @@ export default {
       dragoffx : 0, // See mousedown and mousemove events for explanation
       dragoffy : 0,
       maxHeight: 1200,
-      scrapbookID: ''
+      scrapbookID: this.skill.id
     }
   },
   mounted: function () {

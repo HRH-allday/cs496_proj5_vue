@@ -19,8 +19,8 @@
       </div>
     </div>
     <div class="ui bottom attached segment">
-      <sb_description v-if="SBstatus == 'Description'"></sb_description>
-      <sb_scrap v-if="SBstatus == 'Scrap'"></sb_scrap>
+      <sb_description v-if="SBstatus == 'Description'" :skill="skill"></sb_description>
+      <sb_scrap v-if="SBstatus == 'Scrap'" :skill="skill"></sb_scrap>
     </div>
   </div>
 </template>
@@ -33,10 +33,11 @@
   export default {
     name: 'scrapbook',
     data: function () {
-    return ({
-      SBstatus: 'Scrap'
-    })
-  },
+      return ({
+        SBstatus: 'Scrap'
+      })
+    },
+    props: ['skill'],
     methods:{
       goSkillBook: function(){
 
