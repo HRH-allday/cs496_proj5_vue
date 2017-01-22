@@ -1,119 +1,193 @@
 <template>
   <div class="sb_description">
-    <form class="ui form">
+    <form class="ui form" @submit.prevent>
       <div class="field">
         <label>개발 순서</label>
-        <textarea style="font-size:15px;"></textarea>
+        <textarea style="font-size:15px;"
+          v-model="timeline"></textarea>
       </div>
       <div class="field">
         <label>예시 코드</label>
-        <textarea style="font-size:15px;"></textarea>
+        <textarea style="font-size:15px;"
+          v-model="code"></textarea>
       </div>
       <div class="field">
         <label>예시 레이아웃</label>
+        <br>
         <div class="ui link cards">
-          <div class="card">
-            <div class="image">
-              <img src="/images/avatar2/large/matthew.png">
-            </div>
-            <div class="content">
-              <div class="header">Matt Giampietro</div>
-              <div class="meta">
-                <a>Friends</a>
+          <!-- <DescriptionCard
+            v-on:deleteCard="deleteCard"
+            v-for="(card, index) in cardlist" :card="card" :index="index" :key="card.id"></DescriptionCard> -->
+            <div class="DescriptionCard"
+            v-for="(card, index) in cardlist" :key="card.id">
+            <div class="ui card">
+             <i id="deletecard" class="delete icon" v-on:click="deleteCard(index)"></i>
+
+
+             <div class="dropzone-area" 
+             v-bind:style="{ 'background-image': 'url(' + card.image + ')' }">
+             <div class="dropzone-text">
+             </div>
+             <input type="file" @change="onFileChange($event, index)">
+           </div>
+
+
+
+           <div class="content">
+            <div class="header">
+              <div class="ui transparent input">
+                <input type="text" placeholder="Title" 
+                v-model="card.title">
               </div>
-              <div class="description">
-                Matthew is an interior designer living in New York.
-              </div>
             </div>
-            <div class="extra content">
-              <span class="right floated">
-                Joined in 2013
-              </span>
-              <span>
-                <i class="user icon"></i>
-                75 Friends
-              </span>
+            <div class="description">
+              <div class="ui transparent input">
+                <textarea placeholder="Description" 
+                v-model="card.description"></textarea>
+              </div>
             </div>
           </div>
-          <div class="card">
-            <div class="image">
-              <img src="/images/avatar2/large/molly.png">
-            </div>
-            <div class="content">
-              <div class="header">Molly</div>
-              <div class="meta">
-                <span class="date">Coworker</span>
-              </div>
-              <div class="description">
-                Molly is a personal assistant living in Paris.
-              </div>
-            </div>
-            <div class="extra content">
-              <span class="right floated">
-                Joined in 2011
-              </span>
-              <span>
-                <i class="user icon"></i>
-                35 Friends
-              </span>
-            </div>
-          </div>
-          <div class="card">
-            <div class="image">
-              <img src="/images/avatar2/large/elyse.png">
-            </div>
-            <div class="content">
-              <div class="header">Elyse</div>
-              <div class="meta">
-                <a>Coworker</a>
-              </div>
-              <div class="description">
-                Elyse is a copywriter working in New York.
-              </div>
-            </div>
-            <div class="extra content">
-              <span class="right floated">
-                Joined in 2014
-              </span>
-              <span>
-                <i class="user icon"></i>
-                151 Friends
-              </span>
+          <div class="extra content">
+            <div class="ui orange label">
+              {{ card.tag }}
+              <i class="delete icon"></i>
             </div>
           </div>
         </div>
-        Content
 
-        Content Block
-        A card can contain blocks of content
-
-        Project Timeline
       </div>
-      <button class="ui button" type="submit">Submit</button>
-    </form>
+      <AddCard v-on:addNew="addNewCard"></AddCard>
+    </div>
   </div>
+  <br>
+
+  <button class="ui button" v-on:click="sendDescription">Submit</button>
+</form>
+</div>
 </template>
 
 <script>
   /* eslint-disable */
+  import DescriptionCard from './DescriptionCard'
+  import AddCard from './AddCard.vue'
+
+  var cid = 0;
+
+  var Card = function(image, title, description, tag){
+    this.id = cid++;
+    this.image = image || './static/default.png';
+    this.title = title;
+    this.description = description;
+    this.tag = tag;
+
+  }
+
+
+
 
   export default {
     name: 'sb_description',
     data () {
       return {
+        timeline: "",
+        code: "",
+        cardlist: [new Card('./static/hhj2.jpg','test', 'about what', 'proj1')]
       }
     },
     methods:{
-      goSkillBook: function(){
+      onFileChange(e, index) {
+        console.log(e, index)
+        var files = e.target.files || e.dataTransfer.files;
+        if (!files.length) return;
+        this.createImage(files[0], index);
 
+      },
+
+      createImage(file, index) {
+        var image = new Image();
+        var reader = new FileReader();
+
+        reader.onload = (e) => {
+          this.cardlist[index].image = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      },
+
+
+      addNewCard: function(){
+
+        console.log('clicked');
+        this.cardlist.push(new Card());
+      },
+
+      deleteCard: function(index){
+        console.log('delete?' + index);
+        this.cardlist.splice(index, 1);
+      },
+
+      sendDescription: function(){
+        var httpPost = new XMLHttpRequest(),
+        path = "http://ec2-52-79-155-110.ap-northeast-2.compute.amazonaws.com:3000/submitDescription/",
+        data = JSON.stringify({cards: this.cardlist, timeline: this.timeline, code: this.code});
+        httpPost.onreadystatechange = function(err) {
+          if (httpPost.readyState == 4 && httpPost.status == 200){
+            var res = httpPost.responseText;
+            console.log(res);
+              } else {
+                console.log(err);
+              }
+            };
+        // Set the content type of the request to json since that's what's being sent
+        httpPost.open("POST", path, true);
+        httpPost.setRequestHeader('Content-Type', 'application/json');
+        httpPost.send(data);
       }
-    },
-    components: {
-    }
-  }
+},
+components: {
+  DescriptionCard,
+  AddCard
+}
+}
 </script>
 
 <style scoped>
+
+  .DescriptionCard{
+    margin : 5px;
+  }
+
+  #deletecard {
+    position:absolute;
+    top:0;
+    right:0;
+    z-index:20;
+  }
+
+  .dropzone-area {
+    background-size: 100% 100%;
+    width: 100%;
+    height: 200px;
+    position: relative;
+    &.hovered {
+      border: 2px dashed #2E94C4;
+      .dropzone-title {
+        color: #1975A0;
+      }
+
+    }
+  }
+
+  .dropzone-area input {
+    position: absolute;
+    cursor: pointer;
+    top: 0px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+  }
 
 
 
