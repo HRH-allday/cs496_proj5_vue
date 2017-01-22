@@ -216,6 +216,7 @@ export default {
     },
 
     onDrop: function (e) {
+      // console.log(e.dataTransfer.items)
       var s = document.getElementById('canvas');
       var rect = s.getBoundingClientRect();
       e.dataTransfer.items[0].getAsString((s) => {
@@ -229,6 +230,36 @@ export default {
         })
         this.valid = false
       })
+      if(e.dataTransfer.files.length > 0){
+        let reader = new FileReader()
+        console.log(e.dataTransfer.files[0])
+        reader.onload = () => {
+          console.log(reader.result.substring(0, 30))
+          let img = reader.result.replace(/^data:image\/(png|jpeg);base64,/, "")
+          console.log(img.substring(0, 30))
+          let body = 
+            {
+              image: img,
+              ref: 'localhost'
+            }
+          
+          this.$http.post('http://52.79.155.110:3000/uploadImage/', body).then((response) => {
+            let filename = encodeURIComponent(response.body.imgURL)
+            console.log(response.body.imgURL)
+
+            let posX = e.pageX - rect.left
+            let posY = e.pageY - rect.top
+            let newImg = new Shape(posX, posY, -1, -1, response.body.imgURL, '')
+            this.shapes.push(newImg)
+            this.$http.post('http://52.79.155.110:3000/savePosition/' + filename, {posX: posX, posY: posY, width:-1, height: -1, scrapbookID: this.scrapbookID, description: ''}).then((response) => {
+              console.log('success...?')
+              this.valid = false
+            })
+            
+          })
+        }
+        reader.readAsDataURL(e.dataTransfer.files[0])
+      }
     },
     onDblClick: function (e) {
       let l = this.shapes.length
