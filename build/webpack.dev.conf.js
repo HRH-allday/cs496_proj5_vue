@@ -40,7 +40,11 @@ module.exports = merge(baseWebpackConfig, {
     // semantic-ui | TODO : is usefull since we import it
     semantic: 'semantic-ui',
     Semantic: 'semantic-ui',
-    'semantic-ui': 'semantic-ui'
+    'semantic-ui': 'semantic-ui',
+    'highlight': 'highlight',
+    'highlight.js': 'highlight',
+    'Highlight.js': 'highlight'
+
   }),
     new FriendlyErrors()
   ]

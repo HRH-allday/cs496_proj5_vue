@@ -2,8 +2,8 @@
   <div class="skillbook">
     <div class="ui vertical menu">
       <div class="ui top attached tabular menu">
-        <div class="active item">Skills</div>
-        <div class="item">Projects</div>
+        <div class="active item" @click="tabStatus = 'Skills' , targetProject = null"><h3>Skills</h3></div>
+        <div class="item" @click="tabStatus = 'Projects' , targetSkill = null"><h3>Projects</h3></div>
       </div>
 
       <a class="item" v-on:click="addNewSkill">
@@ -38,57 +38,60 @@
           <div class="ui black deny button">
             Cancel
           </div>
-          <div class="ui positive right labeled icon button"
-          @click="makeNewSkill">
-          Ready
-          <i class="checkmark icon"></i>
+          <div class="ui positive right labeled icon button" @click="makeNewSkill">
+            Ready
+            <i class="checkmark icon"></i>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="item" v-for="field in fields">
-      <div clsss="header">{{ field.name }} </div>
-      <div class="menu">
-        <a class="item" v-for="skill in field.skills" @click="targetSkill = skill"> {{ skill.name }}</a>
+      <div id="addNewProj" class="ui small modal">
+        <i class="close icon"></i>
+        <div class="header">
+          New Project
+        </div>
+        <div class="content">
+          <div class="description">
+            <div class="ui header">Share your own project</div>
+            <div class="content">
+              <div class="ui form">
+                <div class="field">
+                  <label>프로젝트 이름</label>
+                  <input class="fluid" v-model="newProjectName" ></input>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="actions">
+          <div class="ui black deny button">
+            Cancel
+          </div>
+          <div class="ui positive right labeled icon button" @click="addNewProject">
+            Ready
+            <i class="checkmark icon"></i>
+          </div>
+        </div>
       </div>
+
+
+      <div class="item" v-if="tabStatus == 'Skills'" v-for="field in fields">
+        <div clsss="header">{{ field.name }} </div>
+        <div class="menu">
+          <a class="item" v-for="skill in field.skills" @click="targetSkill = skill"> {{ skill.name }}</a>
+        </div>
+      </div>
+
+      <a class="item" v-if="tabStatus == 'Projects'" v-for="project in projects" @click="targetProject = project" > {{ project.Name }}</a>
+
     </div>
+    <ScrapBook v-if="(tabStatus == 'Skills') && (targetSkill != null) " :skill="targetSkill"></ScrapBook>
+    <ProjectBook v-if="(tabStatus == 'Projects') && (targetProject != null) " :project="targetProject"></ProjectBook>
   </div>
-  <ScrapBook v-if="targetSkill != null" :skill="targetSkill"></ScrapBook>
+</template>
 
-      <!--<div class="item">
-        <div class="header">Android</div>
-        <div class="menu">
-          <a class="item">Enterprise</a>
-          <a class="item">Consumer</a>
-        </div>
-      </div>
-      <div class="item">
-        <div class="header">Node.JS</div>
-        <div class="menu">
-          <a class="item">Rails</a>
-          <a class="item">Python</a>
-          <a class="item">PHP</a>
-        </div>
-      </div>
-      <div class="item">
-        <div class="header">Machine Learning</div>
-        <div class="menu">
-          <a class="item">Shared</a>
-          <a class="item">Dedicated</a>
-        </div>
-      </div>
-      <div class="item">
-        <div class="header">Vue.JS</div>
-        <div class="menu">
-          <a class="item">E-mail Support</a>
-          <a class="item">FAQs</a>
-        </div>
-      </div>-->
-    </div>
-  </template>
-
-  <script>
-    /* eslint-disable */
+<script>
+  /* eslint-disable */
   /*
   let skill = function (name, field) {
     this.name = name
@@ -100,38 +103,66 @@
   }
   */
   import ScrapBook from './ScrapBook'
+  import ProjectBook from './ProjectBook'
 
   export default {
     name: 'skillbook',
     data () {
       return {
+        tabStatus: 'Skills',
         fields: [],
         targetSkill: null,
         newField: "",
         newTitle: "",
+        projects: [],
+        targetProject: null,
+        newProjectName: "",
       }
     },
 
     methods:{
       addNewSkill: function(){
-        $('#addNewModal').modal('show');
+        if(this.tabStatus == 'Skills') $('#addNewModal').modal('show');
+        else $('#addNewProj').modal('show');
       },
       makeNewSkill: function(){
         this.$http.post('http://52.79.155.110:3000/createSkill', {fieldName: this.newField, skillName: this.newTitle}).then((response) => {
+          this.newField = "";
+          this.newTitle = "";
           console.log(response)
           this.$http.get('http://52.79.155.110:3000/getFields').then((response) => {
             this.fields = response.body
           })
         })
+      },
+      addNewProject: function(){
+        this.$http.post('http://52.79.155.110:3000/createProject', {name : this.newProjectName}).then((response) => {
+          this.newProjectName = "";
+          console.log(response)
+          this.$http.get('http://52.79.155.110:3000/getProjects').then((response) => {
+            this.projects = response.body
+          })
+        })
       }
     },
     components: {
-      ScrapBook
+      ScrapBook,
+      ProjectBook
     },
     mounted: function () {
       this.$http.get('http://52.79.155.110:3000/getFields').then((response) => {
         this.fields = response.body
       })
+
+      this.$http.get('http://52.79.155.110:3000/getProjects').then((response) => {
+        this.projects = response.body
+      })
+
+      $(document).ready(function(){
+        $('.ui.top.attached.tabular.menu .item').on('click', function(){
+          $(this).addClass('active').siblings().removeClass('active');
+        });
+      });
     }
   }
 </script>
@@ -155,6 +186,7 @@
     background-color: #ffe1e1;
     width: 50%;
   }
+
 
 
 
