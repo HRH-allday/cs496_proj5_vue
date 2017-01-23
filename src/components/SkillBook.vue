@@ -87,7 +87,7 @@
     </div>
     <ScrapBook v-if="(tabStatus == 'Skills') && (targetSkill != null) " :skill="targetSkill"></ScrapBook>
     <ProjectBook v-if="(tabStatus == 'Projects') && (targetProject != null) " :project="targetProject"></ProjectBook>
-      
+
   </div>
 </template>
 
