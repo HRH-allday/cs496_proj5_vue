@@ -4,10 +4,10 @@ import Vue from 'vue'
 import VueResource from 'vue-resource'
 import App from './App'
 import '../node_modules/semantic-ui/dist/semantic.min.css'
+import 'assets/css/github.css'
+
 /* eslint-disable */
 import semantic from 'semantic'
-import highlight from 'highlight'
-import '../highlight/styles/default.css'
 
 Vue.use(VueResource)
 

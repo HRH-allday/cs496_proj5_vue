@@ -6,31 +6,26 @@
       <a class="item">Tab3 </a>
     </div>
     <div class="ui bottom attached active tab segment">
-      <pre>
-        <code class="Java">
-          package com.example.q.pacemaker;
-
-          import java.util.ArrayList;
-
-          public class CustomizeData {
-
-
-
-        }
-
-      </code>
-    </pre>
+        <div class="highlight">
+        <pre>
+          <code id="editor" class="javascript" contenteditable="true"
+            v-model="text">
+          </code>
+        </pre>
+      </div>
   </div>
 </div>
 </template>
 
 <script>
   /* eslint-disable */
+import hljs from 'jspath/highlight.pack.js'
 
   export default {
     name: 'projectbook',
     data: function () {
       return ({
+        text:""
       })
     },
     props:['project'],
@@ -52,8 +47,25 @@
         });
       });
 
-      highlight.initHighlightingOnLoad();
+      hljs.initHighlightingOnLoad()
+      $(function() {
+        $('pre code').each(function(i, block) {
+          hljs.highlightBlock(block)
+        })
+      })
+    },
+    watch: {
+      text : function(newText){
+        var cursorPosition = document.getElementById('editor').selectionEnd;
+        console.log(cursorPosition)
+        $(function() {
+        $('pre code').each(function(i, block) {
+          hljs.highlightBlock(block)
+        })
+      })
+      }
     }
+
   }
 </script>
 
@@ -71,6 +83,10 @@
 
   .ui.bottom.attached.segment {
     text-align: left;
+  }
+
+  .highlight {
+    font-family: 'Courier New';
   }
 
 
