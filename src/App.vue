@@ -1,6 +1,6 @@
 <template>
-  <div id="app" :style="changeBG">
-    <div class="ui secondary menu" >
+  <div id="app" class="clearfix" :style="changeBG">
+    <div class="ui secondary menu">
       <a class="item active brown"
       v-on:click="status = 'mainpage'" >
         Home
@@ -17,9 +17,11 @@
           Logout
         </a>
       </div>
-  </div>
-    <MainPage v-if="status == 'mainpage'"></MainPage>
-    <SkillBook v-else-if="status == 'skillbook'"></SkillBook>
+    </div>
+    <div id="contents">
+      <MainPage v-if="status == 'mainpage'"></MainPage>
+      <SkillBook v-else-if="status == 'skillbook'"></SkillBook>
+    </div>
   </div>
 </template>
 
@@ -70,18 +72,25 @@ export default {
 
 <style>
 
-
+.clearfix:after {
+  content: "";
+  display: table;
+  clear: both;
+}
 #app {
-  height:100%;
-  width:100%;
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  min-height:100%;
+  width:100%; 
   text-align: center;
   background-repeat: no-repeat;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
   background-size:cover;
+  background-attachment: fixed;
 }
-
+#contents {
+  min-height: 100%;
+}
 .ui.secondary.menu{
   background-color: #ffe1e1;
   height:50px;

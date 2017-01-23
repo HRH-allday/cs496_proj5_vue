@@ -23,11 +23,11 @@
               <div class="ui form">
                 <div class="field">
                   <label>분야 이름</label>
-                  <input class="fluid" v-model="newField" ></input>
+                  <input class="fluid" v-model="newField"></input>
                 </div>
                 <div class="field">
                   <label>스킬 이름</label>
-                  <input class="fluid" v-model="newTitle" ></input>
+                  <input class="fluid" v-model="newTitle"></input>
                 </div>
               </div>
             </div>
@@ -87,21 +87,12 @@
     </div>
     <ScrapBook v-if="(tabStatus == 'Skills') && (targetSkill != null) " :skill="targetSkill"></ScrapBook>
     <ProjectBook v-if="(tabStatus == 'Projects') && (targetProject != null) " :project="targetProject"></ProjectBook>
+      
   </div>
 </template>
 
 <script>
   /* eslint-disable */
-  /*
-  let skill = function (name, field) {
-    this.name = name
-    this.id = Array(11).join((Math.random().toString(36)+'00000000000000000').slice(2, 18)).slice(0, 10)
-  }
-  let field = function (name) {
-    this.name = name
-    this.skills = []
-  }
-  */
   import ScrapBook from './ScrapBook'
   import ProjectBook from './ProjectBook'
 
@@ -168,7 +159,9 @@
 </script>
 
 <style scoped>
-
+  #scrapbook {
+    min-height: 100%;
+  }
   .ui.vertical.menu{
     background: #ffe1e1;
     height: 100%;
