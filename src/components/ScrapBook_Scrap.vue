@@ -1,41 +1,41 @@
 <template>
   <div id="divc" class="sb_scrap">
     <canvas id="canvas" width="1200" height="800"
-      v-on:selectstart.prevent
-      v-on:mousedown="onMouseDown"
-      v-on:mousemove="onMouseMove"
-      v-on:mouseup="onMouseUp"
-      v-on:dragover.prevent
-      v-on:drop.prevent="onDrop"
-      v-on:dblclick="onClick"
-      @contextmenu.prevent="onDblClick">
-      This text is displayed if your browser does not support HTML5 Canvas.
-    </canvas>
-    <div v-for="shape in shapes" class="ui modal" :id="shape.id">
-      <i class="close icon"></i>
-      <div class="header">
-        설명
+    v-on:selectstart.prevent
+    v-on:mousedown="onMouseDown"
+    v-on:mousemove="onMouseMove"
+    v-on:mouseup="onMouseUp"
+    v-on:dragover.prevent
+    v-on:drop.prevent="onDrop"
+    v-on:dblclick="onClick"
+    @contextmenu.prevent="onDblClick">
+    This text is displayed if your browser does not support HTML5 Canvas.
+  </canvas>
+  <div v-for="shape in shapes" class="ui modal" :id="shape.id">
+    <i class="close icon"></i>
+    <div class="header">
+      설명
+    </div>
+    <div class="image content">
+      <div class="ui image">
+        <img :src="shape.imgSrc">
       </div>
-      <div class="image content">
-        <div class="ui image">
-          <img :src="shape.imgSrc">
-        </div>
-      </div>
-      <div class="content">
-        <div class="ui form">
-          <div class="field">
-            <label>간단한 설명을 써 주세요.</label>
-            <textarea class="fluid" v-model="shape.description" rows="5"></textarea>
-          </div>
-        </div>
-      </div>
-      <div class="actions">
-        <div class="ui positive right labeled icon button" v-on:click="onSaveClick">
-          저장
-          <i class="checkmark icon"></i>
+    </div>
+    <div class="content">
+      <div class="ui form">
+        <div class="field">
+          <label>간단한 설명을 써 주세요.</label>
+          <textarea class="fluid" v-model="shape.description" rows="5"></textarea>
         </div>
       </div>
     </div>
+    <div class="actions">
+      <div class="ui positive right labeled icon button" v-on:click="onSaveClick">
+        저장
+        <i class="checkmark icon"></i>
+      </div>
+    </div>
+  </div>
     <!--<button id="temp"
     v-on:click="DrawSquare"></button>-->
   </div>
@@ -91,47 +91,52 @@
     }
 
 
-export default {
-  name: 'sb_scrap',
-  props: ['skill'],
-  data () {
-    return {
+    export default {
+      name: 'sb_scrap',
+      props: ['skill'],
+      data () {
+        return {
       valid : true, // when set to true, the canvas will redraw everything
       shapes : [],  // the collection of things to be drawn
       dragging : false, // Keep track of when we are dragging
     // the current selected object.
     // In the future we could turn this into an array for multiple selection
-      resizing: false,
-      selection : null,
+    resizing: false,
+    selection : null,
       dragoffx : 0, // See mousedown and mousemove events for explanation
       dragoffy : 0,
-      maxHeight: 1200,
-      scrapbookID: this.skill.id
+      maxHeight: 1200
     }
   },
   mounted: function () {
-    var s = document.getElementById('canvas');
-    var ctx = s.getContext('2d');
-    this.$http.get('http://52.79.155.110:3000/getPosition').then((response) => {
-      let list = response.data
-      let maxHeight = 500
-      for(let i = 0; i< list.length; i++) {
-        let newImg = new Shape(list[i].posX, list[i].posY, list[i].width, list[i].height, decodeURIComponent(list[i].imgURL), list[i].description)
-        this.shapes.push(newImg)
-        if(newImg.y + newImg.h * 3 > maxHeight) {
-          maxHeight = newImg.y + newImg.h * 3
-        }
-      }
-      var s = document.getElementById('canvas');
-      this.maxHeight = maxHeight
-      for(var i = 0 ; i < this.shapes.length ; i++){
-        this.shapes[i].draw(ctx);
-      }
-    }, (response) => {
-      console.log(response)
-    })
+    this.drawScrap(this.skill);
   },
   methods:{
+
+    drawScrap: function(skill2){
+      this.shapes.splice(0, this.shapes.length);
+      var s = document.getElementById('canvas');
+      var ctx = s.getContext('2d');
+      ctx.clearRect(0,0,s.width, s.height);
+      this.$http.get('http://52.79.155.110:3000/getPosition/'+ skill2._id).then((response) => {
+        let list = response.data
+        let maxHeight = 500
+        for(let i = 0; i< list.length; i++) {
+          let newImg = new Shape(list[i].posX, list[i].posY, list[i].width, list[i].height, decodeURIComponent(list[i].imgURL), list[i].description)
+          this.shapes.push(newImg)
+          if(newImg.y + newImg.h * 3 > maxHeight) {
+            maxHeight = newImg.y + newImg.h * 3
+          }
+        }
+        var s = document.getElementById('canvas');
+        this.maxHeight = maxHeight
+        for(var i = 0 ; i < this.shapes.length ; i++){
+          this.shapes[i].draw(ctx);
+        }
+      }, (response) => {
+        console.log(response)
+      })
+    },
 
     DrawSquare: function (){
       var s = document.getElementById('canvas');
@@ -226,7 +231,7 @@ export default {
         let posY = e.pageY - rect.top
         let newImg = new Shape(posX, posY, -1, -1, s, '')
         this.shapes.push(newImg)
-        this.$http.post('http://52.79.155.110:3000/savePosition/' + filename, {posX: posX, posY: posY, width:-1, height: -1, scrapbookID: this.scrapbookID, description: ''}).then((response) => {
+        this.$http.post('http://52.79.155.110:3000/savePosition/' + filename, {posX: posX, posY: posY, width:-1, height: -1, skillID: this.skill._id , description: ''}).then((response) => {
           console.log('success...?')
         })
         this.valid = false
@@ -239,10 +244,10 @@ export default {
           let img = reader.result.replace(/^data:image\/(png|jpeg);base64,/, "")
           console.log(img.substring(0, 30))
           let body = 
-            {
-              image: img,
-              ref: 'localhost'
-            }
+          {
+            image: img,
+            ref: 'localhost'
+          }
           
           this.$http.post('http://52.79.155.110:3000/uploadImage/', body).then((response) => {
             let filename = encodeURIComponent(response.body.imgURL)
@@ -252,7 +257,7 @@ export default {
             let posY = e.pageY - rect.top
             let newImg = new Shape(posX, posY, -1, -1, response.body.imgURL, '')
             this.shapes.push(newImg)
-            this.$http.post('http://52.79.155.110:3000/savePosition/' + filename, {posX: posX, posY: posY, width:-1, height: -1, scrapbookID: this.scrapbookID, description: ''}).then((response) => {
+            this.$http.post('http://52.79.155.110:3000/savePosition/' + filename, {posX: posX, posY: posY, width:-1, height: -1, skillID: this.skill._id, description: ''}).then((response) => {
               console.log('success...?')
               this.valid = false
             })
@@ -299,7 +304,7 @@ export default {
       })
     }
 
-      
+
 
   },
   watch: {
@@ -316,6 +321,10 @@ export default {
       }
 
       this.valid = true;
+    },
+    skill: function(newSkill){
+      console.log("watched skill");
+      this.drawScrap(newSkill);
     }
   },
   components: {

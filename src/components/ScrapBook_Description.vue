@@ -4,12 +4,12 @@
       <div class="field">
         <label>개발 순서</label>
         <textarea style="font-size:15px;"
-          v-model="timeline"></textarea>
+        v-model="timeline"></textarea>
       </div>
       <div class="field">
         <label>예시 코드</label>
         <textarea style="font-size:15px;"
-          v-model="code"></textarea>
+        v-model="code"></textarea>
       </div>
       <div class="field">
         <label>예시 레이아웃</label>
@@ -71,10 +71,9 @@
   import DescriptionCard from './DescriptionCard'
   import AddCard from './AddCard.vue'
 
-  var cid = 0;
 
   var Card = function(image, title, description, tag){
-    this.id = cid++;
+    this.id = this.cid++;
     this.image = image || './static/default.png';
     this.title = title;
     this.description = description;
@@ -91,11 +90,43 @@
       return {
         timeline: "",
         code: "",
-        cardlist: [new Card('./static/hhj2.jpg','test', 'about what', 'proj1')]
+        cardlist: [new Card('./static/hhj2.jpg','test', 'about what', 'proj1')],
+        cid: 0
       }
+    },
+    props:['skill'],
+    mounted: function(){
+      this.drawDescription();
     },
     props: ['skill'],
     methods:{
+      drawDescription(){
+        var httpPost = new XMLHttpRequest(),
+        path = "http://ec2-52-79-155-110.ap-northeast-2.compute.amazonaws.com:3000/getDescription/",
+        data = JSON.stringify({skillID : this.skill._id});
+        httpPost.onreadystatechange = function(err) {
+          if (httpPost.readyState == 4 && httpPost.status == 200){
+            var res = httpPost.response;
+            console.log(res);
+            var json = JSON.parse(res);
+            var des = json.description;
+            console.log(des);
+            this.cardlist = des.cardlist;
+            this.timeline = des.timeline;
+            this.code = des.code;
+            this.cid = des.cardlist.length;
+
+          } else {
+            console.log(err);
+          }
+
+        }.bind(this);
+        // Set the content type of the request to json since that's what's being sent
+        httpPost.open("POST", path, true);
+        httpPost.setRequestHeader('Content-Type', 'application/json');
+        httpPost.send(data);
+
+      },
       onFileChange(e, index) {
         console.log(e, index)
         var files = e.target.files || e.dataTransfer.files;
@@ -129,26 +160,32 @@
       sendDescription: function(){
         var httpPost = new XMLHttpRequest(),
         path = "http://ec2-52-79-155-110.ap-northeast-2.compute.amazonaws.com:3000/submitDescription/",
-        data = JSON.stringify({cards: this.cardlist, timeline: this.timeline, code: this.code});
+        data = JSON.stringify({skillID: this.skill._id, cardlist: this.cardlist, timeline: this.timeline, code: this.code});
         httpPost.onreadystatechange = function(err) {
           if (httpPost.readyState == 4 && httpPost.status == 200){
             var res = httpPost.responseText;
             console.log(res);
-              } else {
-                console.log(err);
-              }
-            };
+          } else {
+            console.log(err);
+          }
+        };
         // Set the content type of the request to json since that's what's being sent
         httpPost.open("POST", path, true);
         httpPost.setRequestHeader('Content-Type', 'application/json');
         httpPost.send(data);
       }
-},
-components: {
-  DescriptionCard,
-  AddCard
-}
-}
+    },
+    components: {
+      DescriptionCard,
+      AddCard
+    },
+    watch: {
+      skill: function(newSkill){
+        console.log("watched skill");
+        this.drawDescription(newSkill);
+      }
+    }
+  }
 </script>
 
 <style scoped>

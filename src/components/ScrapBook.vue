@@ -37,16 +37,19 @@
         SBstatus: 'Scrap'
       })
     },
-    props: ['skill'],
+    props:['skill'],
+
     methods:{
       goSkillBook: function(){
 
       }
     },
+
     components: {
       sb_description,
       sb_scrap
     },
+
     mounted: function(){
       $(document).ready(function(){
         $('.ui.top.attached.tabular.menu a.item').on('click', function(){
