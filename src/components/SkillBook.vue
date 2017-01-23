@@ -23,11 +23,11 @@
               <div class="ui form">
                 <div class="field">
                   <label>분야 이름</label>
-                  <input class="fluid" v-model="newField" ></input>
+                  <input class="fluid" v-model="newField"></input>
                 </div>
                 <div class="field">
                   <label>스킬 이름</label>
-                  <input class="fluid" v-model="newTitle" ></input>
+                  <input class="fluid" v-model="newTitle"></input>
                 </div>
               </div>
             </div>
@@ -38,56 +38,25 @@
           <div class="ui black deny button">
             Cancel
           </div>
-          <div class="ui positive right labeled icon button"
-          @click="makeNewSkill">
-          Ready
-          <i class="checkmark icon"></i>
+          <div class="ui positive right labeled icon button" @click="makeNewSkill">
+            Ready
+            <i class="checkmark icon"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="item" v-for="field in fields">
+        <div clsss="header">{{ field.name }} </div>
+        <div class="menu">
+          <a class="item" v-for="skill in field.skills" @click="targetSkill = skill"> {{ skill.name }}</a>
         </div>
       </div>
     </div>
-
-    <div class="item" v-for="field in fields">
-      <div clsss="header">{{ field.name }} </div>
-      <div class="menu">
-        <a class="item" v-for="skill in field.skills" @click="targetSkill = skill"> {{ skill.name }}</a>
-      </div>
-    </div>
+    <ScrapBook v-if="targetSkill != null" :skill="targetSkill"></ScrapBook>
   </div>
-  <ScrapBook v-if="targetSkill != null" :skill="targetSkill"></ScrapBook>
+</template>
 
-      <!--<div class="item">
-        <div class="header">Android</div>
-        <div class="menu">
-          <a class="item">Enterprise</a>
-          <a class="item">Consumer</a>
-        </div>
-      </div>
-      <div class="item">
-        <div class="header">Node.JS</div>
-        <div class="menu">
-          <a class="item">Rails</a>
-          <a class="item">Python</a>
-          <a class="item">PHP</a>
-        </div>
-      </div>
-      <div class="item">
-        <div class="header">Machine Learning</div>
-        <div class="menu">
-          <a class="item">Shared</a>
-          <a class="item">Dedicated</a>
-        </div>
-      </div>
-      <div class="item">
-        <div class="header">Vue.JS</div>
-        <div class="menu">
-          <a class="item">E-mail Support</a>
-          <a class="item">FAQs</a>
-        </div>
-      </div>-->
-    </div>
-  </template>
-
-  <script>
+<script>
     /* eslint-disable */
   /*
   let skill = function (name, field) {
@@ -137,7 +106,9 @@
 </script>
 
 <style scoped>
-
+  #scrapbook {
+    min-height: 100%;
+  }
   .ui.vertical.menu{
     background: #ffe1e1;
     height: 100%;

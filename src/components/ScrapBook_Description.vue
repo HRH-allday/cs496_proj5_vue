@@ -206,13 +206,6 @@
     width: 100%;
     height: 200px;
     position: relative;
-    &.hovered {
-      border: 2px dashed #2E94C4;
-      .dropzone-title {
-        color: #1975A0;
-      }
-
-    }
   }
 
   .dropzone-area input {

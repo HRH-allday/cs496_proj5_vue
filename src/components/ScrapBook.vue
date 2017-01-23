@@ -75,6 +75,7 @@
 
   .ui.bottom.attached.segment {
     text-align: left;
+    margin-bottom:13em
   }
 
 
