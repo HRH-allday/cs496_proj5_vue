@@ -43,7 +43,12 @@
               </div>
               <div class="field">
                 <label>파일 첨부 </label>
-                <input type="file" multiple="multiple" @change="onFileChange($event)">
+                <div class="ui file input action">
+                  <input type="text" id="numOfFiles" readonly v-model="numOfFilesText">
+                  <input type="file" ref="files" multiple="multiple" @change="onFileChange($event)" style="display: none">
+                  <div class="ui button" @click="onSelectFileClick">
+                    파일 선택
+                  </div>
               </div>
             </div>
           </div>
@@ -80,10 +85,22 @@
         codeUploads: [],
         codeSelected: null,
         modalStatus:"written",
-        idx: -1
+        idx: -1,
+        numOfFiles: 0
       })
     },
     props:['project'],
+    computed: {
+      numOfFilesText: function () {
+        if(this.numOfFiles == 0) {
+          return '선택된 파일 없음'
+        } else if(this.numOfFiles == 1) {
+          return this.codeUploads[0].title
+        } else {
+          return this.numOfFiles + '개 파일 선택됨'
+        }
+      }
+    },
 
     methods:{
       showModal: function(){
@@ -102,7 +119,6 @@
         if (!files.length) return;
         console.log(files)
         this.codeUploads = [];
-
         for(var i = 0 ; i < files.length ; i++){
           var reader = new FileReader();
           reader.readAsText(files[i]);
@@ -120,8 +136,7 @@
           };
           
         }
-
-
+        this.numOfFiles = files.length
       },
 
       onItemClick: function(ev, index) {
@@ -139,6 +154,9 @@
           this.modalStatus = "upload";
         }
       },
+      onSelectFileClick: function () {
+        this.$refs.files.click()
+      }
 
 
     },
@@ -159,6 +177,8 @@
       })
 
       this.codes = this.project.Codes
+
+      $('#selectBox').dropdown()
     },
     updated: function(){      
       $(function() {

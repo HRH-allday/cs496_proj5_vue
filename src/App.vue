@@ -87,6 +87,7 @@ export default {
 }
 #app {
   min-height:100%;
+  font-family: "맑은 고딕", sans-serif;
   width:100%; 
   text-align: center;
   background-repeat: no-repeat;
