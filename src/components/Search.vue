@@ -1,10 +1,10 @@
 <template>
-<div id="search" class="ui center aligned basic segment">
+<div id="search">
   <h1> 여러분의 스킬을 저장하세요 </h1>
   <div class="ui left icon action input">
     <i class="search icon"></i>
-    <input type="text" placeholder="Search Your Skill">
-    <div class="ui brown submit button">Search</div>
+    <input type="text" placeholder="Search Your Skill" v-bind:value="value" v-on:input="$emit('input', $event.target.value)" v-on:keyup.enter="$emit('mySearch')">
+    <div class="ui brown submit button" @click="$emit('mySearch')">Search</div>
   </div>
 </div>
 </template>
@@ -12,6 +12,7 @@
 <script scoped>
 export default {
   name: 'search',
+  props: ['value'],
   data () {
     return {
     }

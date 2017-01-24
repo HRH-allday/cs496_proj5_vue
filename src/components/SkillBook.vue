@@ -102,7 +102,7 @@
       return {
         tabStatus: 'Skills',
         fields: [],
-        targetSkill: null,
+        targetSkill: this.skill,
         newField: "",
         newTitle: "",
         projects: [],
@@ -110,7 +110,7 @@
         newProjectName: "",
       }
     },
-
+    props:['skill'],
     methods:{
       addNewSkill: function(){
         if(this.tabStatus == 'Skills') $('#addNewModal').modal('show');
@@ -134,6 +134,11 @@
             this.projects = response.body
           })
         })
+      }
+    },
+    watch: {
+      skill: function (newSkill) {
+        this.targetSkill = newSkill
       }
     },
     components: {

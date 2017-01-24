@@ -19,8 +19,8 @@
       </div>
     </div>
     <div id="contents">
-      <MainPage v-if="status == 'mainpage'"></MainPage>
-      <SkillBook v-else-if="status == 'skillbook'"></SkillBook>
+      <MainPage v-if="status == 'mainpage'" @skillView="onSkillView"></MainPage>
+      <SkillBook v-else-if="status == 'skillbook'" :skill="skill"></SkillBook>
     </div>
   </div>
 </template>
@@ -36,9 +36,17 @@ export default {
     MainPage,
     SkillBook
   },
+  methods: {
+    onSkillView: function (skill) {
+      // console.log(skill)
+      this.skill = skill
+      this.status = 'skillbook'
+    }
+  },
   data: function () {
     return ({
-      status: 'mainpage'
+      status: 'mainpage',
+      skill: null
     })
   },
   computed: {
