@@ -192,7 +192,7 @@
     },
     watch:{
       project: function(newProject){
-
+        this.idx = -1;
         this.codes = this.project.Codes
       }
     }

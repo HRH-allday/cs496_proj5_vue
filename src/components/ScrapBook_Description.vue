@@ -232,6 +232,7 @@
             this.timeline = des.timeline;
             this.codes = des.codes;
             this.cid = des.cardlist.length;
+            this.idx = -1;
 
           } else {
             console.log(err);
