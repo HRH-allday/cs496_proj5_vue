@@ -94,8 +94,6 @@
       numOfFilesText: function () {
         if(this.numOfFiles == 0) {
           return '선택된 파일 없음'
-        } else if(this.numOfFiles == 1) {
-          return this.codeUploads[0].title
         } else {
           return this.numOfFiles + '개 파일 선택됨'
         }
@@ -111,6 +109,7 @@
           this.newCode = "";
           this.newTitle = "";
           this.codeUploads=[];
+          this.numOfFiles = 0;
           console.log(response);
           // this.codes.splice(0, this.codes.length, response.body.projects.Codes)
           this.codes = response.body.project.Codes
@@ -188,7 +187,14 @@
           hljs.highlightBlock(block)
         })
       })
-      console.log(this.text)
+
+      this.codes = this.project.Codes
+    },
+    watch:{
+      project: function(newProject){
+
+        this.codes = this.project.Codes
+      }
     }
   }
 </script>
