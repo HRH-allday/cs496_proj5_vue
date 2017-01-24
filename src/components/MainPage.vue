@@ -1,10 +1,10 @@
 <template>
 <div id="mainpage">
-  <div class="ui center aligned basic segment">
-    <Search v-model="queryString" v-on:mySearch="onMySearch"></Search>
-    <br/>
-  </div>
-  <div v-if="searchSubmitted" class="ui text container">
+  <!--<div class="ui center aligned basic segment">-->
+    <!--<Search v-model="queryString" v-on:mySearch="onMySearch"></Search>-->
+  <Search v-on:goSkill="onItemClick"></Search>
+  <!--</div>-->
+  <!--<div v-if="searchSubmitted" class="ui text container">
     <div class="ui raised segment" id="searchResults">
       <div class="ui inverted relaxed divided list">
         <div v-for="skill in searchResults" class="item">
@@ -14,7 +14,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </div>-->
 </div>
 </template>
 
@@ -26,9 +26,9 @@ export default {
   name: 'menubar',
   data () {
     return {
-      queryString: '',
-      searchSubmitted: false,
-      searchResults: []
+      // queryString: '',
+      // searchSubmitted: false,
+      // searchResults: []
     }
   },
   methods:{
