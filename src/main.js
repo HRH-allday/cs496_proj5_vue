@@ -4,7 +4,7 @@ import Vue from 'vue'
 import VueResource from 'vue-resource'
 import App from './App'
 import '../node_modules/semantic-ui/dist/semantic.min.css'
-import 'assets/css/github-gist.css'
+import 'assets/css/googlecode.css'
 
 /* eslint-disable */
 import semantic from 'semantic'
