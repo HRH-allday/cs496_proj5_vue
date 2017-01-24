@@ -70,6 +70,7 @@
   /* eslint-disable */
   import DescriptionCard from './DescriptionCard'
   import AddCard from './AddCard.vue'
+  import hljs from 'jspath/highlight.pack.js'
 
 
   var Card = function(image, title, description, tag){
@@ -98,7 +99,6 @@
     mounted: function(){
       this.drawDescription();
     },
-    props: ['skill'],
     methods:{
       drawDescription(){
         var httpPost = new XMLHttpRequest(),

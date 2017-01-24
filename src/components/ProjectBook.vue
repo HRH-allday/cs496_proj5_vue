@@ -7,10 +7,9 @@
       </div>
     </div>
     <div v-for="(code, index) in codes" v-if="index == idx" class="ui bottom attached active tab segment">
-      <div class="highlight" >
-        <pre>
-          <code id="editor" style="font-family: 'Consolas'">
-{{code.code}}</code>
+      <div class="highlight" style="margin:0px;">
+        <pre style="height: 100%; margin-top:0px;">
+          <code id="editor" style="font-family: 'Consolas';">{{code.code}}</code>
         </pre>
       </div>
     </div>
@@ -22,16 +21,29 @@
       </div>
       <div class="content">
         <div class="description">
-          <div class="ui header">Show your fantastic code to everyone!</div>
+          <div class="ui header">Show your fantastic code to everyone!
+
+          </div>
+            <select id="selectBox" class="ui selection dropdown" style="height:100%" @change="onSelectionChange($event)">
+              <option value="" v-on:click="modalStatus = 'written'">작성한 코드</option>
+              <option v-for="(codeupload, index) in codeUploads" :value="index">{{codeupload.title}}</option>
+            </select>
           <div class="content">
+            <br>
             <div class="ui form">
               <div class="field">
                 <label>제목 </label>
-                <input class="fluid" v-model="newTitle" ></input>
+                <input class="fluid" v-if="modalStatus == 'written'" v-model="newTitle" ></input>
+                <input class="fluid" v-if="modalStatus == 'upload'" v-model="codeSelected.title" ></input>
               </div>
               <div class="field">
                 <label>코드 </label>
-                <textarea class="fluid" v-model="newCode" rows="20"></textarea>
+                <textarea class="fluid" v-if="modalStatus == 'written'" v-model="newCode" rows="20"></textarea>
+                <textarea class="fluid" v-if="modalStatus == 'upload'" v-model="codeSelected.code" rows="20"></textarea>
+              </div>
+              <div class="field">
+                <label>파일 첨부 </label>
+                <input type="file" multiple="multiple" @change="onFileChange($event)">
               </div>
             </div>
           </div>
@@ -54,6 +66,9 @@
   /* eslint-disable */
   import hljs from 'jspath/highlight.pack.js'
 
+
+
+
   export default {
     name: 'projectbook',
     data: function () {
@@ -62,6 +77,9 @@
         codes: this.project.Codes,
         newCode:"",
         newTitle:"",
+        codeUploads: [],
+        codeSelected: null,
+        modalStatus:"written",
         idx: -1
       })
     },
@@ -72,18 +90,56 @@
         $('#addNewCode').modal('show');
       },
       addNewCode: function () {
-        this.$http.post('http://52.79.155.110:3000/addCode', {newTitle: this.newTitle, newCode: this.newCode , projectID: this.project._id}).then((response) => {
+        this.$http.post('http://52.79.155.110:3000/addCode', {newTitle: this.newTitle, newCode: this.newCode , projectID: this.project._id, codeUploads : this.codeUploads}).then((response) => {
           this.newCode = "";
           console.log(response);
           // this.codes.splice(0, this.codes.length, response.body.projects.Codes)
           this.codes = response.body.project.Codes
         })
       },
-      getCodes: function(){
+      onFileChange(e) {
+        var files = e.target.files || e.dataTransfer.files;
+        if (!files.length) return;
+        console.log(files)
+        this.codeUploads = [];
+
+        for(var i = 0 ; i < files.length ; i++){
+          var reader = new FileReader();
+          reader.readAsText(files[i]);
+          reader.onload = (function(newfile){
+            var filename = newfile.name;
+            return function(event) {
+              var contents = event.target.result;
+              console.log({title : filename, code : contents});
+              this.codeUploads.push({title : filename, code : contents});
+            }.bind(this)
+          }.bind(this))(files[i]);
+
+          reader.onerror = function(event) {
+            console.error("File could not be read! Code " + event.target.error.code);
+          };
+          
+        }
+
+
       },
+
       onItemClick: function(ev, index) {
         this.idx = index
-      }
+      },
+
+      onSelectionChange: function(ev) {
+        var selectBox = document.getElementById("selectBox");
+        var selectedValue = selectBox.options[selectBox.selectedIndex].value;
+        if(selectedValue == ""){
+          this.modalStatus = "written";
+        }
+        else{
+          this.codeSelected = this.codeUploads[selectedValue];
+          this.modalStatus = "upload";
+        }
+      },
+
 
     },
 
