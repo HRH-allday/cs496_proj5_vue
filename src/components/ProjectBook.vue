@@ -110,8 +110,9 @@
           this.newTitle = "";
           this.codeUploads=[];
           this.numOfFiles = 0;
-          console.log(response);
-          // this.codes.splice(0, this.codes.length, response.body.projects.Codes)
+          console.log(response.body.project.Codes);
+          // this.codes.splice(0, this.codes.length)
+          // this.codes.concat(response.body.project.Codes)
           this.codes = response.body.project.Codes
         })
       },
@@ -188,7 +189,7 @@
         })
       })
 
-      this.codes = this.project.Codes
+      // this.codes = this.project.Codes
     },
     watch:{
       project: function(newProject){
