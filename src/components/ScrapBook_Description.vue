@@ -8,8 +8,8 @@
       </div>
       <div class="field">
         <label>예시 코드</label>
-        <div class="ui top attached tabular menu">
-          <a class="item" v-for="(code, index) in codes" v-on:click="onItemClick($event, index)">{{code.title}}</a>
+        <div id="codemenu" class="ui top attached tabular menu">
+          <a class="item" v-for="(code, index) in codes" v-on:click="onItemClick($event, index)" v-bind:class="{active:index==idx}">{{code.title}}</a>
           <div class="right menu">
             <a id="addButton" class="ui item" @click="showModal"><i class="add black icon"></i></a>
           </div>
@@ -54,7 +54,7 @@
                     <label>파일 첨부 </label>
                     <div class="ui file input action">
                       <input type="text" id="numOfFiles" readonly v-model="numOfFilesText">
-                      <input type="file" ref="files" multiple="multiple" @change="onFileChangeCode($event)" style="display: none">
+                      <input type="file" ref="fileUploads" multiple="multiple" @change="onFileChangeCode($event)" style="display: none">
                       <div class="ui button" @click="onSelectFileClick">
                         파일 선택
                       </div>
@@ -176,7 +176,7 @@
       this.drawDescription();
 
       $(document).ready(function(){
-        $('.ui.top.attached.tabular.menu a.item').on('click', function(){
+        $('#codemenu a.item').on('click', function(){
           console.log("wtf");
           $(this).addClass('active brown').siblings().removeClass('active brown');
           $('#addButton').removeClass('active brown');
@@ -197,8 +197,6 @@
       numOfFilesText: function () {
         if(this.numOfFiles == 0) {
           return '선택된 파일 없음'
-        } else if(this.numOfFiles == 1) {
-          return this.codeUploads[0].title
         } else {
           return this.numOfFiles + '개 파일 선택됨'
         }
@@ -217,6 +215,7 @@
         this.newCode = "";
         this.newTitle = "";
         this.codeUploads = [];
+        this.numOfFiles = 0;
       },
       drawDescription(){
         var httpPost = new XMLHttpRequest(),
@@ -293,7 +292,7 @@
         }
       },
       onSelectFileClick: function () {
-        this.$refs.files.click()
+        this.$refs.fileUploads.click()
       },
 
       createImage(file, index) {
