@@ -45,7 +45,7 @@
                 <label>파일 첨부 </label>
                 <div class="ui file input action">
                   <input type="text" id="numOfFiles" readonly v-model="numOfFilesText">
-                  <input type="file" ref="files" multiple="multiple" @change="onFileChange($event)" style="display: none">
+                  <input type="file" ref="fileUploads" multiple="multiple" @change="onFileChange($event)" style="display: none">
                   <div class="ui button" @click="onSelectFileClick">
                     파일 선택
                   </div>
@@ -157,7 +157,7 @@
         }
       },
       onSelectFileClick: function () {
-        this.$refs.files.click()
+        this.$refs.fileUploads.click()
       }
 
 

@@ -116,12 +116,6 @@
               </div>
             </div>
           </div>
-          <div class="extra content">
-            <div class="ui orange label">
-              {{ card.tag }}
-              <i class="delete icon"></i>
-            </div>
-          </div>
         </div>
 
       </div>

@@ -17,16 +17,6 @@
           </div>
         </div>
       </div>
-      <div class="extra content">
-        <div class="ui label">
-          Adrienne
-          <i class="delete icon"></i>
-        </div>
-        <div class="ui label">
-          Zoe
-          <i class="delete icon"></i>
-        </div>
-      </div>
     </div>
 
   </div>
