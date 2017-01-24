@@ -9,14 +9,6 @@
           v-on:click="status = 'skillbook'">
       SkillBook
       </a>
-      <a class="item">
-        Friends
-      </a>
-      <div class="right menu">
-        <a class="ui item">
-          Logout
-        </a>
-      </div>
     </div>
     <div id="contents">
       <MainPage v-if="status == 'mainpage'" @skillView="onSkillView"></MainPage>
