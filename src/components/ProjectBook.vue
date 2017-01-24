@@ -109,6 +109,8 @@
       addNewCode: function () {
         this.$http.post('http://52.79.155.110:3000/addCode', {newTitle: this.newTitle, newCode: this.newCode , projectID: this.project._id, codeUploads : this.codeUploads}).then((response) => {
           this.newCode = "";
+          this.newTitle = "";
+          this.codeUploads=[];
           console.log(response);
           // this.codes.splice(0, this.codes.length, response.body.projects.Codes)
           this.codes = response.body.project.Codes
